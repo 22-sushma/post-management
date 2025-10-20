@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
+import toast from "react-hot-toast";
 import { validatePost } from "../utils/validators.js";
 
 export default function PostCreate({ onCreate }) {
@@ -32,13 +33,19 @@ export default function PostCreate({ onCreate }) {
       updatedAt: now,
     };
 
-    onCreate(newPost);
+    if (typeof onCreate === "function") {
+      onCreate(newPost);
+      toast.success("✅ Post created successfully!");
+    } else {
+      console.warn("⚠️ onCreate prop not provided to <PostCreate />");
+      toast.error("⚠️ Could not create post.");
+    }
+
     navigate("/");
   };
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-      {/* Header */}
       <div className="bg-gray-50 p-6 border-b">
         <h2 className="text-3xl font-bold text-gray-900">Create New Post</h2>
         <p className="text-gray-600 mt-1">
@@ -46,7 +53,6 @@ export default function PostCreate({ onCreate }) {
         </p>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Title</label>
@@ -101,3 +107,9 @@ export default function PostCreate({ onCreate }) {
     </div>
   );
 }
+
+PostCreate.defaultProps = {
+  onCreate: () => {
+    console.warn("⚠️ onCreate not provided — post not saved.");
+  },
+};

@@ -4,14 +4,12 @@ export default function PostView({ posts = [] }) {
   const { id } = useParams();
   const post = posts.find((p) => p.id === id);
 
+  // Post not found
   if (!post)
     return (
       <div className="p-6 text-center">
         <p className="text-red-500 text-lg mb-4">Post not found.</p>
-        <Link
-          to="/"
-          className="text-blue-600 hover:underline font-medium"
-        >
+        <Link to="/" className="text-blue-600 hover:underline font-medium">
           Go back
         </Link>
       </div>
@@ -31,17 +29,19 @@ export default function PostView({ posts = [] }) {
       <div className="p-6">
         <p className="text-gray-700 text-lg mb-4">{post.content}</p>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {post.tags.map((tag, idx) => (
-            <span
-              key={idx}
-              className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        {/* Tags (safe) */}
+        {Array.isArray(post.tags) && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {post.tags.map((tag, idx) => (
+              <span
+                key={idx}
+                className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Timestamps */}
         <div className="text-gray-500 text-sm mb-6">
